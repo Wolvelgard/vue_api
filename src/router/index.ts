@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ListView from '@/views/ListView.vue'
 import DetailsView from '@/views/DetailsView.vue'
 
-const routes = [
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
   {
     path: '/',
     name: 'home',
@@ -14,10 +16,6 @@ const routes = [
     component: DetailsView
   }
 ]
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes
 })
 
 export default router

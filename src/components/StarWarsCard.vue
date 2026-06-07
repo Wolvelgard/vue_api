@@ -2,8 +2,8 @@
   <div class="card">
     <h3>{{ personagem.name }}</h3>
 
-    <p><strong>Altura:</strong> {{ formatAltura(personagem.height) }}</p>
-    <p><strong>Peso:</strong> {{ formatPeso(personagem.mass) }}</p>
+    <p>Altura: {{ formatAltura(personagem.height) }}</p>
+    <p>Peso: {{ formatPeso(personagem.mass) }}</p>
 
     <button @click="$emit('ver-detalhes', personagem.url)">
       Ver Detalhes
@@ -51,13 +51,10 @@ export default {
   padding: 15px;
   background: #1a1a2e;
   color: #ffd700;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  cursor: pointer;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
 }
 
 .card h3 {
@@ -74,18 +71,15 @@ export default {
 button {
   width: 100%;
   padding: 10px;
-  background-color: #ffd700;
-  color: #1a1a2e;
+  background-color: #ffd700;  
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   font-weight: bold;
   margin-top: 10px;
-  transition: all 0.3s ease;
 }
 
 button:hover {
   background-color: #ffed4a;
-  transform: scale(1.02);
+  transform: translateY(-5px);
 }
 </style>

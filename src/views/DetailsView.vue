@@ -4,14 +4,8 @@
       ← Voltar
     </button>
 
-    <div v-if="loading" class="loading">
-      <div class="spinner"></div>
-      <p>Carregando dados do personagem...</p>
-    </div>
-
-    <div v-else-if="personagem" class="details-card">
+    <div v-if="personagem" class="details-card">
       <div class="details-header">
-        <div class="character-icon">⭐</div>
         <h1 class="character-name">{{ personagem.name }}</h1>
       </div>
 
@@ -68,11 +62,6 @@
         </button>
       </div>
     </div>
-
-    <div v-else class="error">
-      <p>❌ Personagem não encontrado</p>
-      <button class="back-btn" @click="voltar">Voltar</button>
-    </div>
   </div>
 </template>
 
@@ -81,25 +70,18 @@ export default {
   name: 'DetailsView',
   data() {
     return {
-      personagem: null,
-      loading: true
+      personagem: null
     }
   },
   methods: {
-    async buscarDetalhes() {
-      this.loading = true
+    // Função simplificada - sem try/catch e sem validações
+    buscarDetalhes() {
       const id = this.$route.params.id
-      
-      try {
-        const response = await fetch(`https://swapi.info/api/people/${id}`)
-        if (!response.ok) throw new Error('Personagem não encontrado')
-        this.personagem = await response.json()
-      } catch (error) {
-        console.error('Erro ao buscar detalhes:', error)
-        this.personagem = null
-      } finally {
-        this.loading = false
-      }
+      fetch(`https://swapi.info/api/people/${id}`)
+        .then(response => response.json())
+        .then(data => {
+          this.personagem = data
+        })
     },
     
     formatAltura(height) {
@@ -134,183 +116,64 @@ export default {
 
 <style scoped>
 .details-view {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
-  padding: 2rem;
+  min-height: 100px;
+  padding: 10px;
+  background: #0a0a1a;
 }
 
-.details-view > * {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.back-btn {
-  padding: 0.75rem 1.5rem;
-  border: none;
+.back-btn,
+.action-btn {
+  padding: 20px;
+  border: 0;
   border-radius: 8px;
   background: #ffd700;
   color: #111;
   font-weight: 700;
+  margin-bottom: 10px;
   cursor: pointer;
-  transition: 0.3s ease;
-  margin-bottom: 2rem;
-}
-
-.back-btn:hover {
-  background: #ffea4d;
-  transform: translateY(-2px);
-}
-
-.loading {
-  text-align: center;
-  color: #ffd700;
-  padding: 4rem 0;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid rgba(255, 215, 0, 0.3);
-  border-top: 4px solid #ffd700;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
 }
 
 .details-card {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  padding: 50px;
   border: 2px solid #ffd700;
   border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
 }
 
-.details-header {
+.details-header,
+.details-footer {
   text-align: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.character-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+  padding: 10px;
 }
 
 .character-name {
+  margin: 5px;
   color: #ffd700;
-  font-size: clamp(1.8rem, 5vw, 2.5rem);
-  font-weight: 900;
-  margin: 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 50px;
 }
 
 .details-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 10px;
 }
 
 .detail-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem;
-  background: rgba(255, 215, 0, 0.05);
-  border-radius: 8px;
+  padding: 15px;
   border-left: 3px solid #ffd700;
+  border-radius: 8px;
+  background: #282726;
 }
 
 .detail-label {
-  color: rgba(255, 215, 0, 0.7);
+  color: rgb(255 215 0 / .7);
   font-weight: 600;
-  font-size: 0.9rem;
 }
 
 .detail-value {
   color: #ffd700;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.details-footer {
-  text-align: center;
-  padding-top: 1.5rem;
-  border-top: 2px solid rgba(255, 215, 0, 0.3);
-}
-
-.action-btn {
-  padding: 0.75rem 2rem;
-  border: none;
-  border-radius: 8px;
-  background: #ffd700;
-  color: #111;
   font-weight: 700;
-  cursor: pointer;
-  transition: 0.3s ease;
-  font-size: 1rem;
-}
-
-.action-btn:hover {
-  background: #ffea4d;
-  transform: translateY(-2px);
-}
-
-.error {
-  text-align: center;
-  color: #ffd700;
-  padding: 4rem 0;
-}
-
-.error p {
-  font-size: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-  .details-view {
-    padding: 1.25rem;
-  }
-  
-  .details-card {
-    padding: 1.5rem;
-  }
-  
-  .details-grid {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
-  }
-  
-  .detail-item {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .details-view {
-    padding: 1rem;
-  }
-  
-  .details-card {
-    padding: 1rem;
-  }
-  
-  .character-icon {
-    font-size: 3rem;
-  }
-  
-  .action-btn, .back-btn {
-    width: 100%;
-  }
 }
 </style>

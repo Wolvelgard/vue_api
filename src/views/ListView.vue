@@ -1,12 +1,8 @@
 <template>
   <div class="list-view">
-    <h1 class="title">Personagens de Star Wars</h1>
+    <h1 class="titulo">Personagens de Star Wars</h1>
 
-    <div v-if="loading" class="loading">
-      Carregando...
-    </div>
-
-    <div v-else class="cards-grid">
+    <div class="cards-grid">
       <StarWarsCard
         v-for="personagem in personagens"
         :key="personagem.url"
@@ -73,35 +69,24 @@ export default {
 .list-view {
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
-  padding: 2rem;
+
 }
 
 .list-view > * {
   max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.title {
+.titulo {
   text-align: center;
   color: #ffd700;
-  font-size: clamp(1.8rem, 4vw, 3rem);
-  margin-bottom: 2rem;
-  font-family: Arial, sans-serif;
+  font-size: 70px;
+  margin-bottom: 10px;
   font-weight: 900;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-.loading {
-  text-align: center;
-  color: #ffd700;
-  font-size: 1.2rem;
-  padding: 4rem 0;
 }
 
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  gap: 20px;
 }
 </style>
