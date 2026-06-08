@@ -1,17 +1,4 @@
-<template>
-  <div class="card">
-    <h3>{{ personagem.name }}</h3>
-
-    <p>Altura: {{ formatAltura(personagem.height) }}</p>
-    <p>Peso: {{ formatPeso(personagem.mass) }}</p>
-
-    <button @click="$emit('ver-detalhes', personagem.url)">
-      Ver Detalhes
-    </button>
-  </div>
-</template>
-
-<script>
+<script lang="ts">
 export default {
   name: 'StarWarsCard',
 
@@ -22,10 +9,14 @@ export default {
     }
   },
 
-  emits: ['ver-detalhes'],
+  computed: {
+    personagemNome() {
+      return this.personagem?.name || ''
+    },
 
-  methods: {
-    formatAltura(height) {
+    alturaFormatada() {
+      const height = this.personagem?.height
+
       if (!height || height === 'unknown') {
         return 'Desconhecida'
       }
@@ -33,16 +24,44 @@ export default {
       return `${(Number(height) / 100).toFixed(2)}m`
     },
 
-    formatPeso(mass) {
+    pesoFormatado() {
+      const mass = this.personagem?.mass
+
       if (!mass || mass === 'unknown') {
         return 'Desconhecido'
       }
 
       return `${mass}kg`
     }
+  },
+
+  methods: {
+    verDetalhes() {
+      if (!this.personagem) return
+
+      const id = this.personagem.url
+        .split('/')
+        .filter(Boolean)
+        .pop()
+
+      this.$emit('ver-detalhes', this.personagem.url)
+    }
   }
 }
 </script>
+
+<template>
+  <div class="card">
+    <h3>{{ personagemNome }}</h3>
+
+    <p>Altura: {{ alturaFormatada }}</p>
+    <p>Peso: {{ pesoFormatado }}</p>
+
+    <button @click="verDetalhes">
+      Ver Detalhes
+    </button>
+  </div>
+</template> 
 
 <style scoped>
 .card {

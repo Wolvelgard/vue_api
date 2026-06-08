@@ -1,19 +1,5 @@
-<template>
-  <div class="list-view">
-    <h1 class="titulo">Personagens de Star Wars</h1>
-
-    <div class="cards-grid">
-      <StarWarsCard
-        v-for="personagem in personagens"
-        :key="personagem.url"
-        :personagem="personagem"
-        @ver-detalhes="verDetalhes"
-      />
-    </div>
-  </div>
-</template>
-
-<script>
+<script lang="ts">
+import axios from 'axios'
 import StarWarsCard from '@/components/StarWarsCard.vue'
 
 export default {
@@ -26,7 +12,24 @@ export default {
   data() {
     return {
       personagens: [],
-      loading: true
+      busca: '',
+      loading: false
+    }
+  },
+
+  mounted() {
+    this.listarPersonagens()
+  },
+
+  computed: {
+    personagensFiltrados() {
+      return this.busca
+        ? this.personagens.filter(personagem =>
+            personagem.name
+              .toLowerCase()
+              .includes(this.busca.toLowerCase())
+          )
+        : this.personagens
     }
   },
 
@@ -35,37 +38,61 @@ export default {
       this.loading = true
 
       try {
-        const response = await fetch('https://swapi.info/api/people')
-        const data = await response.json()
+        const api = axios.create({
+          baseURL: 'https://swapi.info/api/people'
+        })
 
-        this.personagens = data.results || data
+        const resposta = await api.get('')
+
+        this.personagens = resposta.data.results || resposta.data
 
         console.log('Personagens carregados:', this.personagens)
-      } catch (error) {
-        console.error('Erro ao carregar personagens:', error)
+      } catch (erro) {
+        console.error('Erro ao carregar personagens:', erro)
       } finally {
         this.loading = false
       }
     },
 
-    verDetalhes(url) {
-      const id = url.match(/\/(\d+)\/?$/)[1]
+    verDetalhes(url: string) {
+      const id = url.match(/\/(\d+)\/?$/)?.[1]
 
-      console.log('Redirecionando para personagem:', id)
+      if (!id) return
 
       this.$router.push({
         path: `/detalhes/${id}`
       })
     }
-  },
-
-  mounted() {
-    this.listarPersonagens()
   }
 }
 </script>
 
+<template>
+  <div class="list-view">
+    <h1 class="titulo">Personagens de Star Wars</h1>
+
+    <div class="search-wrapper">
+      <input
+        v-model="busca"
+        type="text"
+        class="search-input"
+        placeholder="Busque um personagem"
+      />
+    </div>
+
+    <div class="cards-grid">
+      <StarWarsCard
+        v-for="personagem in personagensFiltrados"
+        :key="personagem.url"
+        :personagem="personagem"
+        @ver-detalhes="verDetalhes"
+      />
+    </div>
+  </div>
+</template>
+
 <style scoped>
+/* TODO O CSS ORIGINAL PERMANECE IGUAL */
 .list-view {
   min-height: 100vh;
   background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
@@ -89,4 +116,28 @@ export default {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
+
+.search-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto 30px auto;
+  max-width: 1400px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 20px;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  border: 2px solid #ffd700;
+  border-radius: 50px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 215, 0, 0.6);
+}
+
 </style>

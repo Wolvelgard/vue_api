@@ -1,3 +1,61 @@
+<script lang="ts">
+import axios from 'axios'
+
+export default {
+  name: 'DetailsView',
+
+  data() {
+    return {
+      personagem: null
+    }
+  },
+
+  mounted() {
+    const id = this.$route.params.id
+    this.buscarDetalhesPersonagem(id)
+  },
+
+  methods: {
+    async buscarDetalhesPersonagem(id: string) {
+      const api = axios.create({
+        baseURL: 'https://swapi.info/api/people'
+      })
+
+      try {
+        const resposta = await api.get(`/${id}`)
+        this.personagem = resposta.data
+      } catch (erro) {
+        console.log(erro)
+      }
+    },
+
+    formatAltura(height) {
+      if (!height || height === 'unknown') return 'Desconhecida'
+      return `${(Number(height) / 100).toFixed(2)}m`
+    },
+
+    formatPeso(mass) {
+      if (!mass || mass === 'unknown') return 'Desconhecido'
+      return `${mass}kg`
+    },
+
+    formatTexto(texto) {
+      if (!texto || texto === 'unknown' || texto === 'n/a') return 'Desconhecido'
+      return texto.charAt(0).toUpperCase() + texto.slice(1)
+    },
+
+    formatarData(data) {
+      if (!data) return 'Desconhecida'
+      return new Date(data).toLocaleDateString('pt-BR')
+    },
+
+    voltar() {
+      this.$router.back()
+    }
+  }
+}
+</script>
+
 <template>
   <div class="details-view">
     <button class="back-btn" @click="voltar">
@@ -12,47 +70,65 @@
       <div class="details-grid">
         <div class="detail-item">
           <span class="detail-label">Altura:</span>
-          <span class="detail-value">{{ formatAltura(personagem.height) }}</span>
+          <span class="detail-value">
+            {{ formatAltura(personagem.height) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Peso:</span>
-          <span class="detail-value">{{ formatPeso(personagem.mass) }}</span>
+          <span class="detail-value">
+            {{ formatPeso(personagem.mass) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Cor do cabelo:</span>
-          <span class="detail-value">{{ formatTexto(personagem.hair_color) }}</span>
+          <span class="detail-value">
+            {{ formatTexto(personagem.hair_color) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Cor da pele:</span>
-          <span class="detail-value">{{ formatTexto(personagem.skin_color) }}</span>
+          <span class="detail-value">
+            {{ formatTexto(personagem.skin_color) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Cor dos olhos:</span>
-          <span class="detail-value">{{ formatTexto(personagem.eye_color) }}</span>
+          <span class="detail-value">
+            {{ formatTexto(personagem.eye_color) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Ano de nascimento:</span>
-          <span class="detail-value">{{ personagem.birth_year || 'Desconhecido' }}</span>
+          <span class="detail-value">
+            {{ personagem.birth_year || 'Desconhecido' }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Gênero:</span>
-          <span class="detail-value">{{ formatTexto(personagem.gender) }}</span>
+          <span class="detail-value">
+            {{ formatTexto(personagem.gender) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Data de criação:</span>
-          <span class="detail-value">{{ formatarData(personagem.created) }}</span>
+          <span class="detail-value">
+            {{ formatarData(personagem.created) }}
+          </span>
         </div>
-        
+
         <div class="detail-item">
           <span class="detail-label">Última edição:</span>
-          <span class="detail-value">{{ formatarData(personagem.edited) }}</span>
+          <span class="detail-value">
+            {{ formatarData(personagem.edited) }}
+          </span>
         </div>
       </div>
 
@@ -64,55 +140,6 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'DetailsView',
-  data() {
-    return {
-      personagem: null
-    }
-  },
-  methods: {
-    // Função simplificada - sem try/catch e sem validações
-    buscarDetalhes() {
-      const id = this.$route.params.id
-      fetch(`https://swapi.info/api/people/${id}`)
-        .then(response => response.json())
-        .then(data => {
-          this.personagem = data
-        })
-    },
-    
-    formatAltura(height) {
-      if (!height || height === 'unknown') return 'Desconhecida'
-      return `${(height / 100).toFixed(2)}m`
-    },
-    
-    formatPeso(mass) {
-      if (!mass || mass === 'unknown') return 'Desconhecido'
-      return `${mass}kg`
-    },
-    
-    formatTexto(texto) {
-      if (!texto || texto === 'unknown' || texto === 'n/a') return 'Desconhecido'
-      return texto.charAt(0).toUpperCase() + texto.slice(1)
-    },
-    
-    formatarData(data) {
-      if (!data) return 'Desconhecida'
-      return new Date(data).toLocaleDateString('pt-BR')
-    },
-    
-    voltar() {
-      this.$router.back()
-    }
-  },
-  mounted() {
-    this.buscarDetalhes()
-  }
-}
-</script>
 
 <style scoped>
 .details-view {
